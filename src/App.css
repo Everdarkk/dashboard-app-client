@@ -124,11 +124,6 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.search-field {
+  @apply flex items-center gap-2
 }
