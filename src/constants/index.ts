@@ -72,9 +72,9 @@ export const CLOUDINARY_UPLOAD_URL = getEnvVar("VITE_CLOUDINARY_UPLOAD_URL", "ht
 export const CLOUDINARY_CLOUD_NAME = getEnvVar("VITE_CLOUDINARY_CLOUD_NAME", "your-cloud-name");
 export const BACKEND_BASE_URL = getEnvVar("VITE_BACKEND_BASE_URL", "http://localhost:3001");
 
-export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-export const ACCESS_TOKEN_KEY = import.meta.env.VITE_ACCESS_TOKEN_KEY || "access_token";
-export const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || "refresh_token";
+export const BASE_URL = getEnvVar("VITE_API_URL", "http://localhost:3001");
+export const ACCESS_TOKEN_KEY = getEnvVar("VITE_ACCESS_TOKEN_KEY", "access_token");
+export const REFRESH_TOKEN_KEY = getEnvVar("VITE_REFRESH_TOKEN_KEY", "refresh_token");
 
 export const REFRESH_TOKEN_URL = `${BASE_URL}/refresh-token`;
 
