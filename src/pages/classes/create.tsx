@@ -23,26 +23,26 @@ import {Label} from "@/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Loader2} from "lucide-react";
-
-// Mock data for teachers
-const teachers = [
-  { id: 1, name: "John Smith" },
-  { id: 2, name: "Sarah Johnson" },
-  { id: 3, name: "Michael Chen" },
-]
-
-// Mock data for subjects
-const subjects = [
-  { id: 1, name: "Mathematics", code: "MATH" },
-  { id: 2, name: "English Literature", code: "ENGL" },
-  { id: 3, name: "Physics", code: "PHYS" },
-  { id: 4, name: "Chemistry", code: "CHEM" },
-]
-
-
+import UploadWidget from "@/components/upload-widget";
+import { p } from "node_modules/react-router/dist/development/index-react-server-client-EzWJGpN_.d.mts";
 
 const Create = () => {
     const back = useBack();
+
+    // Mock data for teachers
+    const teachers = [
+        { id: 1, name: "John Smith" },
+        { id: 2, name: "Sarah Johnson" },
+        { id: 3, name: "Michael Chen" },
+    ]          
+
+    // Mock data for subjects
+    const subjects = [
+        { id: 1, name: "Mathematics", code: "MATH" },
+        { id: 2, name: "English Literature", code: "ENGL" },
+        { id: 3, name: "Physics", code: "PHYS" },
+        { id: 4, name: "Chemistry", code: "CHEM" },
+    ]
 
     const form = useForm({
         resolver: zodResolver(classSchema),
@@ -50,14 +50,23 @@ const Create = () => {
             resource: "classes",
             action: "create",
         },
-        defaultValues: {
-            status: "active",
-        },
     });
+    
+    const bannerPublicId = form.watch('bannerCldPubId')
 
+    const setBannerImage = (file: any, field: any) => {
+        if (file) {
+            field.onChange(file.url)
+            form.setValue('bannerCldPubId', file.publicId, { shouldDirty: true, shouldValidate: true })
+        } else {
+            field.onChange('')
+            form.setValue('bannerCldPubId', '', { shouldDirty: true, shouldValidate: true })
+        }
+    }
+    
     const {
         handleSubmit,
-        formState: { isSubmitting },
+        formState: { isSubmitting, errors },
         control,
     } = form;
 
@@ -94,13 +103,33 @@ const Create = () => {
                     <CardContent className="mt-7">
                         <Form {...form}>
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                                <div className="space-y-3">
-                                    <Label>
-                                        Banner Image <span className="text-orange-600">*</span>
-                                    </Label>
+                                <FormField 
+                                    control={control}
+                                    name='bannerUrl'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Banner image <span className="text-orange-600">*</span>
+                                            </FormLabel>
 
-                                    <p>Upload image widget</p>
-                                </div>
+                                            <FormControl>
+                                                <UploadWidget 
+                                                    value={field.value ? { url: field.value, publicId: bannerPublicId ?? ''} : null}
+                                                    onChange={(file) => setBannerImage(file, field)}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                            {errors.bannerCldPubId && !errors.bannerUrl && (
+                                                <p className="text-sm font-medium text-destructive">
+                                                    {errors.bannerCldPubId.message?.toString()}
+                                                </p>
+                                            )}
+                                        </FormItem>
+                                    )}
+
+                                >
+
+                                </FormField>
 
                                 <FormField
                                     control={control}
