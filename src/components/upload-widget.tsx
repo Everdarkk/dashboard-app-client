@@ -83,8 +83,8 @@ const UploadWidget = ({ value = null, onChange, disabled = false}) => {
           onKeyDown={(e) => {
             if(e.key === 'Enter') {
               e.preventDefault()
+              openWidget()
             }
-            openWidget()
           }}
         >
           <div className="upload-prompt">

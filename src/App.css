@@ -175,7 +175,7 @@
 
 @layer components {
     .page-title {
-        @apply text-3xl font-bold text-foreground tracking-tight;
+        @apply text-4xl font-bold text-foreground tracking-tight;
     }
 
     .column-title {
@@ -191,7 +191,7 @@
     }
 
     .actions-row {
-        @apply flex flex-col gap-3 sm:flex-row sm:gap-2 w-full sm:w-auto;
+        @apply flex justify-between items-center gap-5 w-full sm:w-auto;
     }
 
     .sign-up {
