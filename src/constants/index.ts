@@ -75,7 +75,7 @@ const normalizeUrl = (url: string): string => {
 
 export const CLOUDINARY_UPLOAD_URL = getEnvVar("VITE_CLOUDINARY_UPLOAD_URL", "https://api.cloudinary.com/v1_1");
 export const CLOUDINARY_CLOUD_NAME = getEnvVar("VITE_CLOUDINARY_CLOUD_NAME", "your-cloud-name");
-export const BACKEND_BASE_URL = normalizeUrl(getEnvVar("VITE_BACKEND_BASE_URL", "http://localhost:8000/api"));
+export const BACKEND_BASE_URL = normalizeUrl(getEnvVar("VITE_BACKEND_BASE_URL", "http://localhost:8000"));
 
 export const BASE_URL = normalizeUrl(getEnvVar("VITE_API_URL", "http://localhost:3001"));
 export const ACCESS_TOKEN_KEY = getEnvVar("VITE_ACCESS_TOKEN_KEY", "access_token");

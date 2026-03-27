@@ -6,7 +6,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "Introduction to Computer Science",
     code: "CS101",
     description: "Basic concepts of programming and algorithms.",
-    department: "Computer Science",
+    department: {
+      id: 1,
+      name: "Computer Science",
+      description: "Computer science department"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -14,7 +18,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "Calculus I",
     code: "MATH101",
     description: "Fundamental principles of calculus including limits, derivatives, and integrals.",
-    department: "Mathematics",
+    department: {
+      id: 2,
+      name: "Mathematics",
+      description: "Mathematics department"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -22,7 +30,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "English Literature",
     code: "ENG201",
     description: "Study of classic English literature from various periods and authors.",
-    department: "English",
+    department: {
+      id: 3,
+      name: "English",
+      description: "English department"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -30,7 +42,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "Physics I",
     code: "PHYS101",
     description: "Introduction to mechanics, including kinematics, dynamics, and energy.",
-    department: "Physics",
+    department: {
+      id: 4,
+      name: "Physics",
+      description: "Physics department"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -38,7 +54,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "General Chemistry",
     code: "CHEM101",
     description: "Basic principles of chemistry including atomic structure and chemical reactions.",
-    department: "Chemistry",
+    department: {
+      id: 5,
+      name: "Chemistry",
+      description: "Chemistry department"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -46,7 +66,11 @@ export const MOCK_SUBJECTS: Subject[] = [
     name: "World History",
     code: "HIST101",
     description: "Overview of major historical events and civilizations throughout world history.",
-    department: "History",
+    department: {
+      id: 6,
+      name: "History",
+      description: "History department"
+    },
     createdAt: new Date().toISOString()
   }
 ]

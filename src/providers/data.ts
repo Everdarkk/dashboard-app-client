@@ -17,9 +17,7 @@ const parseJsonOrThrow = async (response: Response) => {
   }
 }
 
-const API_BASE_URL = BACKEND_BASE_URL.endsWith('/api')
-  ? BACKEND_BASE_URL
-  : `${BACKEND_BASE_URL}/api`
+const API_BASE_URL = `${BACKEND_BASE_URL}/api`
 
 const options: CreateDataProviderOptions = {
   getList: {
@@ -66,7 +64,7 @@ const options: CreateDataProviderOptions = {
     mapResponse: async (response) => {
       const json: CreateResponse = await parseJsonOrThrow(response)
 
-      return json.data ?? []
+      return json.data
     }
   }
 }
