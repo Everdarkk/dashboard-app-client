@@ -69,6 +69,8 @@ const options: CreateDataProviderOptions = {
   }
 }
 
-const {dataProvider} = createDataProvider(API_BASE_URL, options)
+const {dataProvider} = createDataProvider(API_BASE_URL, options, {
+  credentials: 'include',
+})
 
 export { dataProvider }
