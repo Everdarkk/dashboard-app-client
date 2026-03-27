@@ -1,48 +1,35 @@
 import {CreateView} from "@/components/refine-ui/views/create-view.tsx";
 import {Breadcrumb} from "@/components/refine-ui/layout/breadcrumb.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useBack} from "@refinedev/core";
+import {useBack, useList} from "@refinedev/core";
 import {Separator} from "@/components/ui/separator.tsx";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm } from "@refinedev/react-hook-form"
 import {classSchema} from "@/lib/schema.ts";
 import * as z from "zod";
 
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {Label} from "@/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Loader2} from "lucide-react";
 import UploadWidget from "@/components/upload-widget";
-import { p } from "node_modules/react-router/dist/development/index-react-server-client-EzWJGpN_.d.mts";
+import { Subject, User } from "@/types";
 
 const Create = () => {
     const back = useBack();
 
-    // Mock data for teachers
-    const teachers = [
-        { id: 1, name: "John Smith" },
-        { id: 2, name: "Sarah Johnson" },
-        { id: 3, name: "Michael Chen" },
-    ]          
+    const {query: subjectsQuery} = useList<Subject>({ resource: "subjects", pagination: { pageSize: 100 } })
 
-    // Mock data for subjects
-    const subjects = [
-        { id: 1, name: "Mathematics", code: "MATH" },
-        { id: 2, name: "English Literature", code: "ENGL" },
-        { id: 3, name: "Physics", code: "PHYS" },
-        { id: 4, name: "Chemistry", code: "CHEM" },
-    ]
+    const {query: teachersQuery} = useList<User>({ resource: "users", filters: [{field: 'role', operator: 'eq', value: 'teacher'}], pagination: { pageSize: 100 } })
 
     const form = useForm({
         resolver: zodResolver(classSchema),
@@ -51,6 +38,11 @@ const Create = () => {
             action: "create",
         },
     });
+
+    const subjects = subjectsQuery?.data?.data || []
+    const subjectsLoading = subjectsQuery?.isLoading
+    const teachers = teachersQuery?.data?.data || []
+    const teachersLoading = teachersQuery?.isLoading
     
     const bannerPublicId = form.watch('bannerCldPubId')
 
@@ -65,6 +57,7 @@ const Create = () => {
     }
     
     const {
+        refineCore: { onFinish },
         handleSubmit,
         formState: { isSubmitting, errors },
         control,
@@ -72,7 +65,7 @@ const Create = () => {
 
     const onSubmit = async (values: z.infer<typeof classSchema>) => {
         try {
-            console.log(values);
+            await onFinish(values);
         } catch (error) {
             console.error("Error creating class:", error);
         }
@@ -115,7 +108,7 @@ const Create = () => {
                                             <FormControl>
                                                 <UploadWidget 
                                                     value={field.value ? { url: field.value, publicId: bannerPublicId ?? ''} : null}
-                                                    onChange={(file) => setBannerImage(file, field)}
+                                                    onChange={(file: any) => setBannerImage(file, field)}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -164,6 +157,7 @@ const Create = () => {
                                                         field.onChange(Number(value))
                                                     }
                                                     value={field.value?.toString()}
+                                                    disabled={subjectsLoading}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="w-full">
@@ -197,6 +191,7 @@ const Create = () => {
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     value={field.value}
+                                                    disabled={teachersLoading}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="w-full">
