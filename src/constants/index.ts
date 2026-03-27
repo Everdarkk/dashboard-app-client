@@ -68,11 +68,16 @@ const getEnvVar = (key: string, fallback?: string): string => {
     return value;
 };
 
+const normalizeUrl = (url: string): string => {
+    // Handle accidentally quoted env values and remove trailing slashes.
+    return url.trim().replace(/^['\"]|['\"]$/g, "").replace(/\/+$/, "");
+};
+
 export const CLOUDINARY_UPLOAD_URL = getEnvVar("VITE_CLOUDINARY_UPLOAD_URL", "https://api.cloudinary.com/v1_1");
 export const CLOUDINARY_CLOUD_NAME = getEnvVar("VITE_CLOUDINARY_CLOUD_NAME", "your-cloud-name");
-export const BACKEND_BASE_URL = getEnvVar("VITE_BACKEND_BASE_URL", "http://localhost:3001");
+export const BACKEND_BASE_URL = normalizeUrl(getEnvVar("VITE_BACKEND_BASE_URL", "http://localhost:8000"));
 
-export const BASE_URL = getEnvVar("VITE_API_URL", "http://localhost:3001");
+export const BASE_URL = normalizeUrl(getEnvVar("VITE_API_URL", "http://localhost:3001"));
 export const ACCESS_TOKEN_KEY = getEnvVar("VITE_ACCESS_TOKEN_KEY", "access_token");
 export const REFRESH_TOKEN_KEY = getEnvVar("VITE_REFRESH_TOKEN_KEY", "refresh_token");
 

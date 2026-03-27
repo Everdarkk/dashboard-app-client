@@ -1,13 +1,13 @@
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from "@/constants"
-import { UploadWidgetValue } from "@/types"
+import { UploadWidgetProps, UploadWidgetValue } from "@/types"
 import { UploadCloudIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-const UploadWidget = ({ value = null, onChange, disabled = false}) => {
+const UploadWidget = ({ value = null, onChange, disabled = false}: UploadWidgetProps) => {
   const widgetRef = useRef<CloudinaryWidget | null>(null)
   const onChangeRef = useRef(onChange)
 
-  const [preview, setPreview] = useState(null as UploadWidgetValue | null)
+  const [preview, setPreview] = useState<UploadWidgetValue | null>(null)
   const [deleteToken, setDeleteToken] = useState<string | null>(null)
   const [isRemoving, setIsRemoving] = useState(false)
 
