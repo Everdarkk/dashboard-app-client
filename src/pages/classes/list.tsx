@@ -23,14 +23,6 @@ function ClassesList() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
 
-  // FILTERS
-  const statusFilters = selectedStatus === 'all' ? [] : [
-    { field: 'status', operator: 'eq' as const, value: selectedStatus }
-  ]
-  const searchFilters = searchQuery ? [
-    { field: 'name', operator: 'contains' as const, value: searchQuery }
-  ] : []
-
   // TABLE
   const classTable = useTable<Class>({
     columns: useMemo<ColumnDef<Class>[]>(() => [
@@ -99,23 +91,30 @@ function ClassesList() {
         ),
       },
     ], []),
-    refineCoreProps: {
-      resource: 'classes',
-      pagination: {
-        pageSize: 10,
-        mode: 'server',
-      },
-      filters: {
-        permanent: [
-          ...statusFilters, ...searchFilters,
-        ],
-      },
-      sorters: {
-        initial: [
-          { field: 'id', order: 'desc' },
-        ],
-      },
-    },
+    refineCoreProps: useMemo(() => {
+      const statusFilters = selectedStatus === 'all' ? [] : [
+        { field: 'status', operator: 'eq' as const, value: selectedStatus }
+      ]
+      const searchFilters = searchQuery ? [
+        { field: 'name', operator: 'contains' as const, value: searchQuery }
+      ] : []
+
+      return {
+        resource: 'classes',
+        pagination: {
+          pageSize: 10,
+          mode: 'server' as const,
+        },
+        filters: {
+          permanent: [...statusFilters, ...searchFilters],
+        },
+        sorters: {
+          initial: [
+            { field: 'id', order: 'desc' as const },
+          ],
+        },
+      }
+    }, [selectedStatus, searchQuery]),
   })
 
   return (
