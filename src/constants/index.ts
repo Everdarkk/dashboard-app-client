@@ -47,6 +47,12 @@ export const DEPARTMENT_OPTIONS = DEPARTMENTS.map((dept) => ({
     label: dept,
 }));
 
+export const CLASS_STATUS_OPTIONS = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'archived', label: 'Archived' },
+] as const;
+
 export const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes
 export const ALLOWED_TYPES = [
     "image/png",

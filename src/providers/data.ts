@@ -34,10 +34,15 @@ const options: CreateDataProviderOptions = {
 
         const value = String(filter.value)
 
-        if(resource === 'subjects') {
-          if(field === 'department') params.department = value
+        if (resource === 'subjects') {
+          if (field === 'department') params.department = value
+          if (field === 'name' || field === 'code') params.search = value
+        }
 
-          if(field === 'name' || field === 'code') params.search = value
+        if (resource === 'classes') {
+          if (field === 'name') params.search = value
+          if (field === 'status') params.status = value
+          if (field === 'subject') params.subject = value
         }
       })
 
