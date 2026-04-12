@@ -1,5 +1,6 @@
 import { BACKEND_BASE_URL } from '@/constants'
 import { ListResponse } from '@/types'
+import { CrudFilter, LogicalFilter } from '@refinedev/core'
 import { CreateResponse } from '@refinedev/core'
 import {createDataProvider, CreateDataProviderOptions} from '@refinedev/rest'
 
@@ -19,6 +20,18 @@ const parseJsonOrThrow = async (response: Response) => {
 
 const API_BASE_URL = `${BACKEND_BASE_URL}/api`
 
+const flattenLogicalFilters = (filters?: CrudFilter[]): LogicalFilter[] => {
+  if (!filters?.length) return []
+
+  return filters.flatMap((filter) => {
+    if ('field' in filter) {
+      return [filter]
+    }
+
+    return flattenLogicalFilters(filter.value)
+  })
+}
+
 const options: CreateDataProviderOptions = {
   getList: {
     getEndpoint: ({ resource }) => normalizeResourcePath(resource),
@@ -28,9 +41,11 @@ const options: CreateDataProviderOptions = {
       const pageSize = pagination?.pageSize ?? 10
 
       const params: Record<string, string|number> = {page, limit: pageSize}
+      const logicalFilters = flattenLogicalFilters(filters)
 
-      filters?.forEach((filter) => {
-        const field = 'field' in filter ? filter.field : ''
+      logicalFilters.forEach((filter) => {
+        const field = filter.field
+        const operator = filter.operator
 
         const value = String(filter.value)
 
@@ -45,6 +60,10 @@ const options: CreateDataProviderOptions = {
           if (field === 'name') params.search = value
           if (field === 'status') params.status = value
           if (field === 'subject') params.subject = value
+          if (field === 'subjectId') params.subjectId = value
+          if (field === 'teacherId') params.teacherId = value
+          if (field === 'capacity' && operator === 'gte') params.capacityMin = value
+          if (field === 'capacity' && operator === 'lte') params.capacityMax = value
         }
       })
 
