@@ -8,7 +8,10 @@ import { CLASS_STATUS_OPTIONS } from "@/constants"
 import { CreateButton } from "@/components/refine-ui/buttons/create"
 import { DataTable } from "@/components/refine-ui/data-table/data-table"
 import { useTable } from "@refinedev/react-table"
+import { useList } from "@refinedev/core"
 import { Class } from "@/types"
+import { Subject } from "@/types"
+import { User } from "@/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 
@@ -22,6 +25,27 @@ function ClassesList() {
   // STATES
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedTeacher, setSelectedTeacher] = useState('all')
+  const [capacityMinInput, setCapacityMinInput] = useState('')
+  const [capacityMaxInput, setCapacityMaxInput] = useState('')
+
+  const { query: subjectsQuery } = useList<Subject>({
+    resource: 'subjects',
+    pagination: { pageSize: 100 },
+  })
+
+  const subjects = subjectsQuery?.data?.data ?? []
+  const subjectsLoading = subjectsQuery?.isLoading
+
+  const { query: teachersQuery } = useList<User>({
+    resource: 'users',
+    filters: [{ field: 'role', operator: 'eq', value: 'teacher' }],
+    pagination: { pageSize: 100 },
+  })
+
+  const teachers = teachersQuery?.data?.data ?? []
+  const teachersLoading = teachersQuery?.isLoading
 
   // TABLE
   const classTable = useTable<Class>({
@@ -95,6 +119,24 @@ function ClassesList() {
       const statusFilters = selectedStatus === 'all' ? [] : [
         { field: 'status', operator: 'eq' as const, value: selectedStatus }
       ]
+      const categoryFilters = selectedCategory === 'all' ? [] : [
+        { field: 'subjectId', operator: 'eq' as const, value: selectedCategory }
+      ]
+      const teacherFilters = selectedTeacher === 'all' ? [] : [
+        { field: 'teacherId', operator: 'eq' as const, value: selectedTeacher }
+      ]
+      const parsedCapacityMin = Number(capacityMinInput)
+      const parsedCapacityMax = Number(capacityMaxInput)
+      const hasCapacityMin = capacityMinInput.trim() !== '' && Number.isFinite(parsedCapacityMin) && parsedCapacityMin >= 0
+      const hasCapacityMax = capacityMaxInput.trim() !== '' && Number.isFinite(parsedCapacityMax) && parsedCapacityMax >= 0
+      const capacityFilters = [
+        ...(hasCapacityMin
+          ? [{ field: 'capacity', operator: 'gte' as const, value: Math.floor(parsedCapacityMin) }]
+          : []),
+        ...(hasCapacityMax
+          ? [{ field: 'capacity', operator: 'lte' as const, value: Math.floor(parsedCapacityMax) }]
+          : []),
+      ]
       const searchFilters = searchQuery ? [
         { field: 'name', operator: 'contains' as const, value: searchQuery }
       ] : []
@@ -106,7 +148,7 @@ function ClassesList() {
           mode: 'server' as const,
         },
         filters: {
-          permanent: [...statusFilters, ...searchFilters],
+          permanent: [...statusFilters, ...categoryFilters, ...teacherFilters, ...capacityFilters, ...searchFilters],
         },
         sorters: {
           initial: [
@@ -114,7 +156,14 @@ function ClassesList() {
           ],
         },
       }
-    }, [selectedStatus, searchQuery]),
+    }, [
+      selectedStatus,
+      selectedCategory,
+      selectedTeacher,
+      searchQuery,
+      capacityMinInput,
+      capacityMaxInput,
+    ]),
   })
 
   return (
@@ -158,6 +207,54 @@ function ClassesList() {
                   ))}
                 </SelectContent>
               </Select>
+
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by category ..." />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+
+                  {subjects.map((subject) => (
+                    <SelectItem key={subject.id} value={String(subject.id)} disabled={subjectsLoading}>
+                      {subject.name} ({subject.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by teacher ..." />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="all">All Teachers</SelectItem>
+
+                  {teachers.map((teacher) => (
+                    <SelectItem key={teacher.id} value={teacher.id} disabled={teachersLoading}>
+                      {teacher.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Input
+                type="number"
+                min={0}
+                placeholder="Min capacity"
+                value={capacityMinInput}
+                onChange={(e) => setCapacityMinInput(e.target.value)}
+              />
+
+              <Input
+                type="number"
+                min={0}
+                placeholder="Max capacity"
+                value={capacityMaxInput}
+                onChange={(e) => setCapacityMaxInput(e.target.value)}
+              />
 
               <CreateButton />
             </div>
