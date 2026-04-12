@@ -59,11 +59,16 @@ const options: CreateDataProviderOptions = {
         if (resource === 'classes') {
           if (field === 'name') params.search = value
           if (field === 'status') params.status = value
-          if (field === 'subject') params.subject = value
+          if (field === 'subject' || field === 'subject.name') params.subject = value
           if (field === 'subjectId') params.subjectId = value
           if (field === 'teacherId') params.teacherId = value
           if (field === 'capacity' && operator === 'gte') params.capacityMin = value
           if (field === 'capacity' && operator === 'lte') params.capacityMax = value
+        }
+
+        if (resource === 'users') {
+          if (field === 'role') params.role = value
+          if (field === 'name' || field === 'email') params.search = value
         }
       })
 

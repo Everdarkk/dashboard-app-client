@@ -119,11 +119,8 @@ function ClassesList() {
       const statusFilters = selectedStatus === 'all' ? [] : [
         { field: 'status', operator: 'eq' as const, value: selectedStatus }
       ]
-      const selectedSubjectName = subjects.find(
-        (subject) => String(subject.id) === selectedCategory
-      )?.name
       const categoryFilters = selectedCategory === 'all' ? [] : [
-        { field: 'subject', operator: 'contains' as const, value: selectedSubjectName ?? '' }
+        { field: 'subjectId', operator: 'eq' as const, value: selectedCategory }
       ]
       const teacherFilters = selectedTeacher === 'all' ? [] : [
         { field: 'teacherId', operator: 'eq' as const, value: selectedTeacher }
@@ -166,7 +163,6 @@ function ClassesList() {
       searchQuery,
       capacityMinInput,
       capacityMaxInput,
-      subjects,
     ]),
   })
 
