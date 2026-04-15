@@ -62,7 +62,7 @@ const SubjectsCreate = () => {
     }
 
     return (
-        <CreateView className="subject-view">
+        <CreateView className="class-view">
             <Breadcrumb />
 
             <h1 className="page-title">Create a Subject</h1>
