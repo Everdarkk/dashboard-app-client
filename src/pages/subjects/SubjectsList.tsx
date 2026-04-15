@@ -17,14 +17,6 @@ const SubjectsList = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedDepartment, setSelectedDepartment] = useState('all')
 
-  // FILTERS
-  const departmentFilters = selectedDepartment === 'all' ? [] : [
-    { field: 'department', operator: 'eq' as const, value: selectedDepartment }
-  ]
-  const searchFilters = searchQuery ? [
-    { field: 'name', operator: 'contains' as const, value: searchQuery }
-  ] : []
-
   // TABLE
   const subjectTable = useTable<Subject>({
     columns: useMemo<ColumnDef<Subject>[]>(() => [
@@ -33,64 +25,79 @@ const SubjectsList = () => {
         accessorKey: 'code',
         size: 100,
         header: () => <p className="column-title ml-2">Code</p>,
-        cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>
+        cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
       },
       {
         id: 'name',
         accessorKey: 'name',
         size: 200,
         header: () => <p className="column-title">Name</p>,
-        cell: ({ getValue }) => <span className="text-foreground">{getValue<string>()}</span>,
-        filterFn: 'includesString'
+        cell: ({ getValue }) => (
+          <span className="text-foreground font-medium">{getValue<string>()}</span>
+        ),
+        filterFn: 'includesString',
       },
       {
         id: 'department',
         accessorKey: 'department.name',
-        size: 150,
+        size: 180,
         header: () => <p className="column-title">Department</p>,
-        cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>
+        cell: ({ getValue }) => (
+          <Badge variant="secondary">{getValue<string>()}</Badge>
+        ),
       },
       {
         id: 'description',
         accessorKey: 'description',
         size: 300,
         header: () => <p className="column-title">Description</p>,
-        cell: ({ getValue }) => <span className="text-foreground truncate line-clamp-2">{getValue<string>()}</span>,
-        filterFn: 'includesString'
+        cell: ({ getValue }) => (
+          <span className="text-foreground truncate line-clamp-2">
+            {getValue<string>()}
+          </span>
+        ),
+        filterFn: 'includesString',
       },
-
     ], []),
-    refineCoreProps: {
-      resource: 'subjects',
-      pagination: {
-        pageSize: 10,
-        mode: 'server'
-      },
-      filters: {
-        permanent: [
-          ...departmentFilters, ...searchFilters
-        ]
-      },
-      sorters: {
-        initial: [
-          { field: 'id', order: 'desc' }
-        ]
-      },
-    }
+
+    refineCoreProps: useMemo(() => {
+      const departmentFilters =
+        selectedDepartment === 'all'
+          ? []
+          : [{ field: 'department', operator: 'eq' as const, value: selectedDepartment }]
+
+      const searchFilters = searchQuery
+        ? [{ field: 'name', operator: 'contains' as const, value: searchQuery }]
+        : []
+
+      return {
+        resource: 'subjects',
+        pagination: {
+          pageSize: 10,
+          mode: 'server' as const,
+        },
+        filters: {
+          permanent: [...departmentFilters, ...searchFilters],
+        },
+        sorters: {
+          initial: [{ field: 'id', order: 'desc' as const }],
+        },
+      }
+    }, [selectedDepartment, searchQuery]),
   })
 
   return (
-    // MARKUP
-
     <ListView>
       <div className="flex flex-col gap-5">
         <Breadcrumb />
-        
+
         <h1 className="page-title text-4xl">Subjects</h1>
 
         <div className="intro-row flex flex-col gap-5">
           <p>
-            Quick access to essential metrics and management tools for your subjects. Monitor performance, track progress, and manage your subjects efficiently from this centralized dashboard.
+            Quick access to essential metrics and management tools for your subjects. Monitor
+            performance, track progress, and manage your subjects efficiently from this
+            centralized dashboard.
           </p>
 
           <div className="actions-row flex justify-between items-center gap-5">
@@ -99,7 +106,7 @@ const SubjectsList = () => {
 
               <Input
                 type="text"
-                placeholder="Search by name ..."
+                placeholder="Search by name or code ..."
                 className="pl-10 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -113,24 +120,22 @@ const SubjectsList = () => {
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="all">
-                    All Departments
-                  </SelectItem>
+                  <SelectItem value="all">All Departments</SelectItem>
 
-                  {DEPARTMENT_OPTIONS.map(dept => (
+                  {DEPARTMENT_OPTIONS.map((dept) => (
                     <SelectItem key={dept.value} value={dept.value}>
                       {dept.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <CreateButton />
             </div>
           </div>
         </div>
 
-        <DataTable table={subjectTable}/>
+        <DataTable table={subjectTable} />
       </div>
     </ListView>
   )

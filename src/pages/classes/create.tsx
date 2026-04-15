@@ -33,6 +33,12 @@ const Create = () => {
 
     const form = useForm({
         resolver: zodResolver(classSchema),
+        defaultValues: {
+            name: '',
+            description: '',
+            bannerUrl: '',
+            bannerCldPubId: '',
+        },
         refineCoreProps: {
             resource: "classes",
             action: "create",
@@ -136,6 +142,7 @@ const Create = () => {
                                                 <Input
                                                     placeholder="Introduction to Biology - Section A"
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -279,6 +286,7 @@ const Create = () => {
                                                 <Textarea
                                                     placeholder="Brief description about the class"
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
